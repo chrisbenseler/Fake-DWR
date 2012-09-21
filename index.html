@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+	<title>Fake DWR</title>
+	<script src="/dwr/interface/yourService.js" type="text/javascript"></script>
+	<script src="/dwr/engine.js" type="text/javascript"></script>
+	
+	<script src="fakedwr.js"></script>
+	
+	<script>
+	window.onload = function() {
+		//intialize FakeDWR and define with is the DWR service that will be mocked
+		var fakedwr = new FakeDWR(yourService);
+
+		//some fake data to be returned
+		var data_to_be_returned = [{id: 1, name: "Git"}, {id: 2, name: "Hub"}];
+		//mock "yourMethod" method and define whatdata callback function will return
+		fakedwr.mock_method("yourMethod", data_to_be_returned);
+
+		/*
+		 * Call yourMethod from yourService (DWR method from DWR object) just the same way
+		 * and define callback function, 
+		 * following DWR structure (as seen on the following example: http://directwebremoting.org/dwr-demo/simple/text.html)
+		 * FakeDWR validates the amount of parameters passed to each method, so if yourService.yourMethod expects 'n' parameters,
+		 * you must pass 'n' parameters to the mocked method, plus the callback function (surrounded by brackets).
+		 * Call the mocked method with wrong number of parameters or with missing callback function will throw an exception
+		 */
+		yourService.yourMethod(0,  { callback: function(dataFromServer) {
+				for(var i=0; i<dataFromServer.length; i++) {
+					alert(dataFromServer[i].id + ": " + dataFromServer[i].name);
+				}
+			}
+		});
+
+		//unmock method
+		fakedwr.unmock_method("yourMethod");
+
+	}
+	</script>
+
+</head>
+<body>
+<h1>Fake DWR</h1>
+<ul>
+
+</ul>
+</body>
+</html>
